@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const { v4: uuidv4 } = require('uuid');
 
 router.route('/posts').get((req, res) => {
   res.json(db.posts);
@@ -23,9 +24,13 @@ router.route('/:id').get((req, res) => {
 router.route('/').post((req, res) => {
   const id = uuidv4();
   const { day, seat, client, email } = req.body;
+  const takenSeat = db.seats.some( mySeat => mySeat.seat === seat && mySeat.day === day);
   if (!day || !seat || !client || !email) {
     return res.json({ error: 'Fills in all fields' });
+  } else if(takenSeat.length > 0) {
+    return res.status(409).json({ message: 'The slot is already taken...' });
   }
+
   db.seats.push({id, day, seat, client, email});
   res.json({message: 'ok'});
 });
