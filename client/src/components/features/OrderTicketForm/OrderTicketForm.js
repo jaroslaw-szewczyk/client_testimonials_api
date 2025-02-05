@@ -40,7 +40,7 @@ const OrderTicketForm = () => {
 
     if(order.client && order.email && order.day && order.seat) {
       await dispatch(addSeatRequest(order));
-      dispatch(loadSeatsRequest());
+      await dispatch(loadSeatsRequest());
       setOrder({
         client: '',
         email: '',
